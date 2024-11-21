@@ -71,10 +71,10 @@ I will follow these steps to analyze the data:
 
 ## FINDINGS
 
-   This part will be filled after the submission of the proposal is comfirmed. 
+   This part will be filled after the submission of the proposal is been confirmed and conducted. 
  
 ## LIMITATIONS AND FUTURE WORK
 
-   This part will be filled after the submission of the proposal is comfirmed.
+   This part will be filled after the submission of the proposal is been confirmed conducted.
 
     
