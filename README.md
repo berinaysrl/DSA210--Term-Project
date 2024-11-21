@@ -1,27 +1,33 @@
-# DSA210--Term-Project
+# DSA210 Term Project
 In this term project, I will be exploring the relationship with my Instagram usage level and my focused hours.
 
 I am Berinay Zümra Sarıel, a DSA210 student who will conduct this term project about the relationship between her social media usage and study focus time. 
 
 
 ## Table of Contents
-**[MOTIVATION](#MOTIVATION)**  
+**[Motivation](#Motivatiom)**  
 
-**[PROJECT IDEA](#PROJECT-IDEA)**
+**[Project Idea](#Project-Idea)**
 
-**[DATA SOURCE](#DATA-SOURCE)** 
+**[Data Source](#Data-Source)** 
 
-**[PROJECT PLAN](#PROJECT-PLAN)** 
+**[Project Plan](#Project-Plan)** 
 
-**[FINDINGS](#FINDINGS)** 
+**[Findings](#Findings)** 
 
-**[LIMITATIONS AND FUTURE WORK](#LIMITATIONS-AND-FUTURE-WORK)** 
+**[Limitations and Future Work](#Limitations-and-Future-Work)** 
 
-## MOTIVATION 
+
+
+
+## Motivation
 
 As it is a commonly known issue, social media useage has an adverse effect on one's productivity and focus time. By analyzing these two datasets together, I hope to gain valuable insights into how distractions influence my academic performance and identify patterns that can help me improve my time management.
 
-## PROJECT IDEA
+
+
+
+## Project Idea
 
 The goal of this project is to determine whether there is an **inverse relationship** between my Instagram activity and study focus time throughout this semester. Specifically:
 1. I will analyze my **Instagram likes activity** to measure how active I am on the platform each day. (The reason why I did not go with the activity time is because of the requested data did not contain such a collection of total hours spent on a daily basis.)
@@ -30,7 +36,10 @@ The goal of this project is to determine whether there is an **inverse relations
    - Higher Instagram usage corresponds to lower study time (and vice versa).  
    - This may reveal patterns about how distractions like Instagram impact productivity.
 
-## DATA SOURCE
+
+
+
+## Data Source
 
 1. **Forest App**
    I have exported my focus session data from the app, which spans my whole  university time period of studying. I have tracked the duration of study sessions and timestamps for when they occurred. I have requested to export my personal data from the  [Forest app](https://www.forestapp.cc/) from my phone.
@@ -48,9 +57,13 @@ The goal of this project is to determine whether there is an **inverse relations
 
 *note: Raw data files will not be included in this repository to protect privacy and keep the repository lightweight. Only processed and anonymized data will be used for analysis. ".gitignore" will be used to ensure this.*
 
-## PROJECT PLAN
 
-I will follow these steps to analyze the data. I will use Phyton for data analysis and visualization with Pandas, numpy, matplotlib, and seaborn to achieve these steps:  
+
+
+
+## Project Plan
+
+I will follow these steps to analyze the data. I will use Python for data analysis and visualization with Pandas, numpy, matplotlib, and seaborn to achieve these steps:  
 
 1. **Preprocessing**:
    - Parse and clean both datasets.
@@ -67,16 +80,21 @@ I will follow these steps to analyze the data. I will use Phyton for data analys
    - Calculate the correlation between Instagram usage and study focus time to test my hypothesis of an inverse relationship.
 
 4. **Visualization**:
-   - Create comparative charts:
-     - Line charts for daily trends.
-     - Scatter plots to show the relationship between the two variables.
+     Create comparative charts:
+     - Line charts will show the trend of Instagram likes and study focus time over days
+     - Scatter plots to show any correlation between the two variables (if exists).
 
-## FINDINGS
 
-   This part will be filled after the submission of the proposal is been confirmed and conducted. 
+
+
+## Findings
+
+   This section will be completed after the proposal is approved and the analysis is conducted.
+
+
  
-## LIMITATIONS AND FUTURE WORK
+## Limitations and Future Work
 
-   This part will be filled after the submission of the proposal is been confirmed conducted.
+   This section will be completed after the proposal is approved and the analysis is conducted. In the future, I may extend this analysis to other social media platforms like YouTube (my second mostly-used app for distraction) or explore strategies to reduce distractions.
 
     
