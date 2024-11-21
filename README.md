@@ -46,9 +46,11 @@ The goal of this project is to determine whether there is an **inverse relations
     - Timestamps of likes I've given to posts or reels.
     - The associated metadata for each like (like the URL of the content and its title.)
 
+*note: Raw data files will not be included in this repository to protect privacy and keep the repository lightweight. Only processed and anonymized data will be used for analysis. ".gitignore" will be used to ensure this.*
+
 ## PROJECT PLAN
 
-I will follow these steps to analyze the data:
+I will follow these steps to analyze the data. I will use Phyton for data analysis and visualization with Pandas, numpy, matplotlib, and seaborn to achieve these steps:  
 
 1. **Preprocessing**:
    - Parse and clean both datasets.
