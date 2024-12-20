@@ -58,7 +58,7 @@ for ax, (title, (start, end)) in zip(axes, academic_periods.items()):
     ax.set_xticklabels(period_data['date'][::tick_frequency].dt.strftime('%d-%b-%Y'), rotation=45)
 
     # setting the title for each graph
-    ax.set_title(f"Study Hours vs Instagram Likes ({title})")
+    ax.set_title(f"Studying Attempts vs Instagram Likes ({title})")
 
 
 # Adjust layout and save
