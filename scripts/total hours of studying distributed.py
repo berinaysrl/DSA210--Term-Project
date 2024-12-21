@@ -1,7 +1,3 @@
-#total saati attempt sayısına bölüp hangi derse en çok bi oturuşta odaklanabiliyom  => attention span hesapla
-#attention spanin en yüksek olduğu zamanlardaki like sayılarına bak
-
-#first, we allocate the total hours spent for each course, by randomly distributing the "unset" data, like "unset" or "study"
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -14,17 +10,21 @@ data = pd.read_csv(file_path)
 data['Start Time'] = pd.to_datetime(data['Start Time'])
 data['End Time'] = pd.to_datetime(data['End Time'])
 
+#excluding almost non-recorded tags from the main dataset for simplicity
+excluded_tags = ['CDP', 'PROJ201']
+data = data[~data['Tag'].isin(excluded_tags)]
+
 # Calculate session durations in hours
 data['Duration (hours)'] = (data['End Time'] - data['Start Time']).dt.total_seconds() / 3600
 
-# Step 1: Merge duplicate tags
+# Merge duplicate tags
 data['Tag'] = data['Tag'].replace({'SPS': 'SPS102', 'SPS102 1': 'SPS102', 'CS204 1': 'CS204'})
 
-# Step 2: Group by tag to consolidate hours
+# Group by tag to consolidate hours
 merged_data = data.groupby('Tag')['Duration (hours)'].sum().reset_index()
 merged_data.columns = ['Tag', 'Total Hours']
 
-# Step 3: Handle "Unset" and "Study"
+# Handle "Unset" and "Study" by randomly distributing them
 # Extract total hours for "Unset" and "Study"
 unset_hours = merged_data.loc[merged_data['Tag'] == 'Unset', 'Total Hours'].values[0]
 study_hours = merged_data.loc[merged_data['Tag'] == 'Study', 'Total Hours'].values[0]
@@ -35,14 +35,14 @@ filtered_data = merged_data[~merged_data['Tag'].isin(['Unset', 'Study'])].copy()
 # Calculate the total hours excluding "Unset" and "Study"
 total_hours_excluding_unset_and_study = filtered_data['Total Hours'].sum()
 
-# Step 4: Calculate weights for each tag
+# Calculate weights for each tag
 filtered_data['Weight'] = filtered_data['Total Hours'] / total_hours_excluding_unset_and_study
 
-# Step 5: Distribute "Unset" and "Study" hours proportionally
+# Distribute "Unset" and "Study" hours proportionally
 filtered_data['Distributed Unset Hours'] = filtered_data['Weight'] * unset_hours
 filtered_data['Distributed Study Hours'] = filtered_data['Weight'] * study_hours
 
-# Step 6: Add the redistributed hours to the original hours
+# Add the redistributed hours to the original hours
 filtered_data['Adjusted Total Hours'] = (
     filtered_data['Total Hours'] +
     filtered_data['Distributed Unset Hours'] +
@@ -50,14 +50,14 @@ filtered_data['Adjusted Total Hours'] = (
 )
 
 # Sort the final dataset in descending order by Adjusted Total Hours
-filtered_data = filtered_data.sort_values(by='Adjusted Total Hours', ascending=False)
+filtered_data = filtered_data.sort_values(by='Adjusted Total Hours', ascending=True)
 
 # Final dataset
 final_data = filtered_data[['Tag', 'Total Hours', 'Distributed Unset Hours', 'Distributed Study Hours', 'Adjusted Total Hours']]
 
 # Save a bar chart for the final dataset
 plt.figure(figsize=(12, 8))
-plt.barh(final_data['Tag'], final_data['Adjusted Total Hours'], color='steelblue')
+plt.barh(final_data['Tag'], final_data['Adjusted Total Hours'], color='pink')
 plt.xlabel('Adjusted Total Hours')
 plt.title('Adjusted Total Hours by Course Tag (Descending Order)')
 
