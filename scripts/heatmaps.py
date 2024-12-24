@@ -79,29 +79,21 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
         .sum()
         .unstack(fill_value=0)
     )
+    
     # Reindex daily columns to ensure Monday→Sunday
     existing_days = [c for c in day_order if c in daily_focus.columns]
     daily_focus = daily_focus.reindex(columns=existing_days)
 
-    # Aggregate Instagram usage by hour and day
+    
     hourly_insta = period_insta.groupby("hour").size()
     daily_insta = period_insta.groupby("day", observed=False).size().reindex(day_order, fill_value=0)
 
-    # 1) Tag-vs-Tag correlation: hourly and daily
-    hourly_correlation = hourly_focus.corr()
-    daily_correlation = daily_focus.corr()
-
-    # 2) Aggregate single-number correlation: sum across tags vs. Instagram usage
-    # Hourly
     hourly_sum = hourly_focus.sum(axis=0)
     hour_corr = hourly_sum.corr(hourly_insta)
 
-    # Daily
     daily_sum = daily_focus.sum(axis=0)
     day_corr = daily_sum.corr(daily_insta)
 
-    # 3) Per-Tag correlation vs. Instagram usage (hourly, daily)
-    # Hourly
     tag_hourly_corr = {}
     for tag in hourly_focus.index:
         tag_series = hourly_focus.loc[tag]
@@ -109,7 +101,6 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
         tag_hourly_corr[tag] = corr_val
     df_tag_hourly_corr = pd.DataFrame.from_dict(tag_hourly_corr, orient="index", columns=["Hourly Correlation"])
 
-    # Daily
     tag_daily_corr = {}
     for tag in daily_focus.index:
         tag_series = daily_focus.loc[tag]
@@ -117,24 +108,6 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
         tag_daily_corr[tag] = corr_val
     df_tag_daily_corr = pd.DataFrame.from_dict(tag_daily_corr, orient="index", columns=["Daily Correlation"])
 
-    # ============== PLOTS START HERE ==============
-
-    # --- 1) Tag vs. Tag correlation heatmaps ---
-    plt.figure(figsize=(12, 10))
-    sns.heatmap(hourly_correlation, annot=True, cmap=heatmap_cmap, fmt=".2f", vmin=-1, vmax=1)
-    plt.title(f"Hourly Correlation Between Tags ({period_name})", fontsize=16)
-    plt.savefig(f"{output_dir}/hourly_correlation_tags_{period_name}.png")
-    plt.show()
-    plt.close()
-
-    plt.figure(figsize=(12, 10))
-    sns.heatmap(daily_correlation, annot=True, cmap=heatmap_cmap, fmt=".2f", vmin=-1, vmax=1)
-    plt.title(f"Daily Correlation Between Tags ({period_name})", fontsize=16)
-    plt.savefig(f"{output_dir}/daily_correlation_tags_{period_name}.png")
-    plt.show()
-    plt.close()
-
-    # --- 2) Aggregate correlation with Instagram usage ---
     plt.figure(figsize=(8, 6))
     plt.bar(["Hourly", "Daily"], [hour_corr, day_corr], color=bar_colors["aggregate"])
     plt.title(f"Aggregate Correlation of Study Time vs. Instagram Usage ({period_name})", fontsize=14)
@@ -147,7 +120,6 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
     plt.close()
     plt.show()
 
-    # --- 3) Per-Tag correlation vs. Instagram usage ---
     df_tag_hourly_corr.sort_values("Hourly Correlation", inplace=True)
     plt.figure(figsize=(8, 6))
     sns.barplot(x="Hourly Correlation", y=df_tag_hourly_corr.index, data=df_tag_hourly_corr,
