@@ -6,7 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 study_data_path = '/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/Cleaned_and_Adjusted_Study_Data.csv'
-insta_data_path = '/Users/berinayzumrasariel/Desktop/extracted_likes_timestamps.csv'  
+insta_data_path = '/Users/berinayzumrasariel/Desktop/extracted_likes_timestamps.csv'
 study_data = pd.read_csv(study_data_path)
 insta_data = pd.read_csv(insta_data_path)
 
@@ -14,19 +14,16 @@ study_data["Start Time"] = pd.to_datetime(study_data["Start Time"], errors="coer
 study_data["End Time"] = pd.to_datetime(study_data["End Time"], errors="coerce").dt.tz_localize(None)
 insta_data["timestamp"] = pd.to_datetime(insta_data["timestamp"], errors="coerce").dt.tz_localize(None)
 
-
+# Create a binary target variable: Did Instagram usage occur during the study session?
 study_data["Instagram Used"] = study_data.apply(
     lambda row: int(
         insta_data["timestamp"].between(row["Start Time"], row["End Time"]).any()
     ),
-    axis=1
-)
+    axis=1)
 
 y = study_data["Instagram Used"]
 x = study_data[["Duration (hours)", "Weight", "Adjusted Hours", "Adjusted Sessions"]]
-
 train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.2, random_state=42)
-
 
 param_grid = {
     'max_depth': [None, 10, 20],
@@ -53,7 +50,6 @@ print('Classification Report:')
 print(classification_report_result)
 print(f'Precision: {precision}')
 print(f'AUC-ROC: {roc_auc}')
-
 
 conf_matrix = confusion_matrix(test_y, y_pred)
 plt.figure(figsize=(8, 6))
