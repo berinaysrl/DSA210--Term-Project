@@ -3,33 +3,27 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load datasets
 study_data_path = "/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/Cleaned_and_Adjusted_Study_Data.csv"
-insta_data_path = "/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/extracted_likes_timestamps.csv"
-
+insta_data_path = "/Users/berinayzumrasariel/Desktop/extracted_likes_timestamps.csv"
 study_data = pd.read_csv(study_data_path)
 insta_data = pd.read_csv(insta_data_path, header=None, names=["timestamp"])
 
-# Convert to datetime
 study_data["Start Time"] = pd.to_datetime(study_data["Start Time"], errors="coerce").dt.tz_localize(None)
 study_data["End Time"] = pd.to_datetime(study_data["End Time"], errors="coerce").dt.tz_localize(None)
 insta_data["timestamp"] = pd.to_datetime(insta_data["timestamp"], errors="coerce").dt.tz_localize(None)
 
-# Define academic periods and tags
+
 academic_periods = {
     "Oct 2024 - Now": ["CS204", "MATH204", "HUM201", "DSA210", "NS206", "ECON202"],
     "Feb 2024 - June 2024": ["MATH201", "MATH203", "ENS208", "CS201", "PSY201"],
-    "Before Feb 2024": ["TLL102", "SPS102", "NS102", "MATH102"]
-}
+    "Before Feb 2024": ["TLL102", "SPS102", "NS102", "MATH102"] }
 
-# Day-of-week order
 day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-# Output directory to save graphs
 output_dir = "./graphs"
 os.makedirs(output_dir, exist_ok=True)
 
-# Define colors
+
 heatmap_cmap = sns.diverging_palette(220, 20, as_cmap=True)  # Pastel blue and coral
 bar_colors = {
     "aggregate": ["skyblue", "lightcoral"],  # Two pastel colors
@@ -37,10 +31,8 @@ bar_colors = {
     "daily_tag": "lightseagreen"
 }
 
-
-# Helper function to calculate and plot correlations
 def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_date):
-    # Filter data (create copies to avoid SettingWithCopyWarning)
+
     period_study = study_data.loc[
         (study_data["Start Time"] >= start_date) &
         (study_data["Start Time"] <= end_date) &
@@ -52,12 +44,10 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
         (insta_data["timestamp"] <= end_date)
         ].copy()
 
-    # If no data, skip
     if period_study.empty or period_insta.empty:
         print(f"No data for {period_name}. Skipping.")
         return
 
-    # Create hour and ordered weekday columns
     period_study["hour"] = period_study["Start Time"].dt.hour
     period_study["day"] = period_study["Start Time"].dt.day_name()
     period_study["day"] = pd.Categorical(period_study["day"], categories=day_order, ordered=True)
@@ -66,25 +56,21 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
     period_insta["day"] = period_insta["timestamp"].dt.day_name()
     period_insta["day"] = pd.Categorical(period_insta["day"], categories=day_order, ordered=True)
 
-    # Aggregate study data by hour and day
     hourly_focus = (
         period_study
         .groupby(["Tag", "hour"], observed=False)["Duration (hours)"]
         .sum()
-        .unstack(fill_value=0)
-    )
+        .unstack(fill_value=0) )
+
     daily_focus = (
         period_study
         .groupby(["Tag", "day"], observed=False)["Duration (hours)"]
         .sum()
-        .unstack(fill_value=0)
-    )
-    
-    # Reindex daily columns to ensure Monday→Sunday
+        .unstack(fill_value=0) )
+
     existing_days = [c for c in day_order if c in daily_focus.columns]
     daily_focus = daily_focus.reindex(columns=existing_days)
 
-    
     hourly_insta = period_insta.groupby("hour").size()
     daily_insta = period_insta.groupby("day", observed=False).size().reindex(day_order, fill_value=0)
 
@@ -147,8 +133,6 @@ def analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_
     plt.show()
     plt.close()
 
-
-# Iterate through academic periods
 academic_period_dates = {
     "Oct 2024 - Now": ("2024-10-01", insta_data["timestamp"].max()),
     "Feb 2024 - June 2024": ("2024-02-01", "2024-06-30"),
@@ -158,4 +142,3 @@ academic_period_dates = {
 for period_name, tags in academic_periods.items():
     start_date, end_date = map(pd.Timestamp, academic_period_dates[period_name])
     analyze_and_plot(period_name, tags, study_data, insta_data, start_date, end_date)
-
