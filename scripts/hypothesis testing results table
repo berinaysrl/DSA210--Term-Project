@@ -1,0 +1,109 @@
+warnings.filterwarnings("ignore", category=UserWarning)
+
+study_data_path = "/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/Cleaned_and_Adjusted_Study_Data.csv"
+insta_data_path = "/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/extracted_likes_timestamps.csv"
+
+study_data = pd.read_csv(study_data_path)
+insta_data = pd.read_csv(insta_data_path, header=None, names=["timestamp"])
+
+study_data["Start Time"] = pd.to_datetime(
+    study_data["Start Time"], errors="coerce"
+).dt.tz_localize(None)
+study_data["End Time"] = pd.to_datetime(
+    study_data["End Time"], errors="coerce"
+).dt.tz_localize(None)
+insta_data["timestamp"] = pd.to_datetime(
+    insta_data["timestamp"], errors="coerce"
+).dt.tz_localize(None)
+
+academic_periods = {
+    "Oct 2024 - Now": ["CS204", "MATH204", "HUM201", "DSA210", "NS206", "ECON202"],
+    "Feb 2024 - June 2024": ["MATH201", "MATH203", "ENS208", "CS201", "PSY201"],
+    "Before Feb 2024": ["TLL102", "SPS102", "NS102", "MATH102"],
+}
+academic_period_dates = {
+    "Oct 2024 - Now": ("2024-10-01", insta_data["timestamp"].max()),
+    "Feb 2024 - June 2024": ("2024-02-01", "2024-06-30"),
+    "Before Feb 2024": ("2022-09-01", "2024-01-31"),
+}
+
+results = []
+
+for period_name, tags in academic_periods.items():
+    start_date, end_date = map(pd.Timestamp, academic_period_dates[period_name])
+
+    period_study = study_data.loc[
+        (study_data["Start Time"] >= start_date) &
+        (study_data["Start Time"] <= end_date) &
+        (study_data["Tag"].isin(tags))
+    ]
+
+    period_insta = insta_data.loc[
+        (insta_data["timestamp"] >= start_date) &
+        (insta_data["timestamp"] <= end_date)
+    ]
+
+    hourly_study = (
+        period_study.groupby(period_study["Start Time"].dt.hour)["Duration (hours)"].sum()
+    )
+    hourly_insta = period_insta.groupby(period_insta["timestamp"].dt.hour).size()
+
+    daily_study = (
+        period_study.groupby(period_study["Start Time"].dt.date)["Duration (hours)"].sum()
+    )
+    daily_insta = period_insta.groupby(period_insta["timestamp"].dt.date).size()
+
+    combined_hourly = pd.DataFrame({
+        "Study Hours": hourly_study,
+        "Instagram Usage": hourly_insta
+    }).fillna(0)
+
+    combined_daily = pd.DataFrame({
+        "Study Hours": daily_study,
+        "Instagram Usage": daily_insta
+    }).fillna(0)
+
+    if (
+        len(combined_hourly) > 1
+        and combined_hourly["Study Hours"].nunique() > 1
+        and combined_hourly["Instagram Usage"].nunique() > 1
+    ):
+        hourly_corr, hourly_p = spearmanr(
+            combined_hourly["Study Hours"], combined_hourly["Instagram Usage"]
+        )
+        hourly_interpretation = (
+            f"Hypothesis {'is rejected' if hourly_p < 0.05 else 'fails to be rejected'} "
+            f"at p-value {hourly_p:.3f}"
+        )
+    else:
+        hourly_corr, hourly_p, hourly_interpretation = None, None, "Insufficient variability for correlation"
+
+    if (
+        len(combined_daily) > 1
+        and combined_daily["Study Hours"].nunique() > 1
+        and combined_daily["Instagram Usage"].nunique() > 1
+    ):
+        daily_corr, daily_p = spearmanr(
+            combined_daily["Study Hours"], combined_daily["Instagram Usage"]
+        )
+        daily_interpretation = (
+            f"Hypothesis {'is rejected' if daily_p < 0.05 else 'fails to be rejected'} "
+            f"at p-value {daily_p:.3f}"
+        )
+    else:
+        daily_corr, daily_p, daily_interpretation = None, None, "Insufficient variability for correlation"
+
+    results.append({
+        "Period": period_name,
+        "Hourly Correlation": hourly_corr,
+        "Hourly P-value": hourly_p,
+        "Hourly Interpretation": hourly_interpretation,
+        "Daily Correlation": daily_corr,
+        "Daily P-value": daily_p,
+        "Daily Interpretation": daily_interpretation
+    })
+
+results_df = pd.DataFrame(results)
+table_str = tabulate(results_df, headers="keys", tablefmt="grid")
+print("\n--- Hypothesis Testing Results ---\n")
+print(table_str)
