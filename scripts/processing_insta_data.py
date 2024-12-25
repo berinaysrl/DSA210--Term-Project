@@ -1,31 +1,36 @@
 import pandas as pd
 import json
 import os
+from datetime import datetime, timezone, timedelta
 
-# Ensuring that the 'processed_data' directory exists
-if not os.path.exists('processed_data_insta'):
-    os.makedirs('processed_data_insta')
+output_dir = 'processed_data_insta'
+os.makedirs(output_dir, exist_ok=True)
 
-# Loading Instagram JSON file here
-with open('/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/liked_posts.json', 'r') as file:
+file_path = '/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/liked_posts.json'
+with open(file_path, 'r') as file:
     data = json.load(file)
+    
+timestamps = []
+for like in data['likes_media_likes']:
+    for item in like["string_list_data"]:
+        timestamp = int(item['timestamp'])
+        timestamps.append(timestamp)
 
-# Here we are extracting the timestamps from the file 
-timestamps = [int(item['string_list_data'][0]['timestamp']) for item in data['likes_media_likes']]
+df_instagram = pd.DataFrame({'timestamp': timestamps})
+df_instagram['timestamp'] = pd.to_datetime(df_instagram['timestamp'], unit='s')  
+df_instagram['date'] = df_instagram['timestamp'].dt.date 
+df_instagram['time'] = df_instagram['timestamp'].dt.strftime('%H:%M')  
 
-# Converting timestamps to DataFrame
-df_instagram = pd.DataFrame(timestamps, columns=['timestamp'])
-df_instagram['timestamp'] = pd.to_datetime(df_instagram['timestamp'], unit='s')  # Convert to datetime
+processed_data = df_instagram[['date', 'time']]
 
-# Converting to dates and count likes per day
-df_instagram['date'] = df_instagram['timestamp'].dt.date
-daily_likes = df_instagram['date'].value_counts().reset_index()
-daily_likes.columns = ['date', 'likes']
+processed_data['date'] = processed_data['date'].astype(str)
 
-# Sorting the data chronologically by date, this way we can track the flow of ups and downs
-daily_likes = daily_likes.sort_values(by='date', ascending=True)
+csv_output_path = os.path.join(output_dir, 'processed_instagram.csv')
+processed_data.to_csv(csv_output_path, index=False)
 
-# Saving anonymized and processed data
-daily_likes.to_csv('processed_data_insta/processed_instagram.csv', index=False)
-print("Instagram data has been processed and saved.")
+json_output_path = os.path.join(output_dir, 'processed_instagram.json')
+processed_data_json = processed_data.to_dict(orient='records')  # Convert DataFrame to list of dictionaries
+with open(json_output_path, 'w') as json_file:
+    json.dump(processed_data_json, json_file, indent=4)
 
+print(f"Instagram data has been processed and saved to:\nCSV: {csv_output_path}\nJSON: {json_output_path}")
