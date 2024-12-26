@@ -9,7 +9,7 @@ data['Start Time'] = pd.to_datetime(data['Start Time'], errors='coerce')
 data['End Time'] = pd.to_datetime(data['End Time'], errors='coerce')
 data['Duration (hours)'] = (data['End Time'] - data['Start Time']).dt.total_seconds() / 3600
 
-excluded_tags = ['CDP', 'PROJ201']
+excluded_tags = ['CDP', 'PROJ201', 'studying italian', 'writing stories']
 data = data[~data['Tag'].isin(excluded_tags)]
 data['Tag'] = data['Tag'].replace({'SPS': 'SPS102', 'SPS102 1': 'SPS102', 'CS204 1': 'CS204'})
 
