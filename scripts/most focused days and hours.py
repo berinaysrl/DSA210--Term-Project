@@ -1,8 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-file_path = '/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/Cleaned_and_Adjusted_Study_Data.csv'
-attention_file = '/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/attention_span_analysis.csv'
+file_path = '/content/Cleaned_and_Adjusted_Study_Data.csv'
+attention_file = '/content/attention_span_analysis.csv'
 
 data = pd.read_csv(file_path)
 attention_data = pd.read_csv(attention_file)
@@ -17,12 +17,14 @@ if data['Start Time'].isnull().any() or data['End Time'].isnull().any():
 if 'Duration (hours)' not in data.columns:
     data['Duration (hours)'] = (data['End Time'] - data['Start Time']).dt.total_seconds() / 3600
 
-excluded_tags = ['CDP', 'PROJ201']
+excluded_tags = ['CDP', 'PROJ201', 'studying italian', 'writing stories']
 data = data[~data['Tag'].isin(excluded_tags)]
 
-
-data['Tag'] = data['Tag'].replace({'SPS': 'SPS102', 'SPS102 1': 'SPS102', 'CS204 1': 'CS204'})
-
+data['Tag'] = data['Tag'].replace({
+    'SPS': 'SPS102',
+    'SPS102 1': 'SPS102',
+    'CS204 1': 'CS204'
+})
 
 unset_data = data[data['Tag'] == 'Unset']
 study_data = data[data['Tag'] == 'Study']
@@ -43,6 +45,7 @@ for idx, row in attention_data.iterrows():
     tag = row['Tag']
     hours_to_add = row['Distributed Unset Hours'] + row['Distributed Study Hours']
     sessions_to_add = row['Distributed Unset Sessions'] + row['Distributed Study Sessions']
+
     if tag in data['Tag'].values:
         data.loc[data['Tag'] == tag, 'Duration (hours)'] += hours_to_add
     else:
@@ -51,24 +54,33 @@ for idx, row in attention_data.iterrows():
             'Duration (hours)': hours_to_add,
             'study_sessions': sessions_to_add
         }
-        data = data.append(new_row, ignore_index=True)
+        new_row_df = pd.DataFrame([new_row])
+        data = pd.concat([data, new_row_df], ignore_index=True)
 
-data = data[~data['Tag'].isin(['Unset', 'Study'])]  
+
+data = data[~data['Tag'].isin(['Unset', 'Study'])]
+
 
 data['Hour'] = data['Start Time'].dt.hour
 data['Day of Week'] = data['Start Time'].dt.day_name()
 
-days_order = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 tags = data['Tag'].unique()
 for tag in tags:
     tag_data = data[data['Tag'] == tag]
+    
+    if tag_data.empty:
+        continue
 
     hourly_counts = tag_data['Hour'].value_counts().reindex(range(24), fill_value=0) 
     daily_counts = tag_data['Day of Week'].value_counts().reindex(days_order, fill_value=0)
 
-    plt.figure(figsize=(12, 8))
+    if hourly_counts.sum() == 0 and daily_counts.sum() == 0:
+        continue
 
+
+    plt.figure(figsize=(12, 8))
     plt.subplot(2, 1, 1)
     plt.plot(hourly_counts.index, hourly_counts.values, marker='o', color='plum')
     plt.title(f'Most Focused Hours for {tag}')
@@ -82,7 +94,9 @@ for tag in tags:
     plt.xlabel('Day of the Week')
     plt.ylabel('Number of Study Sessions')
     plt.tight_layout()
-    output_path = f'/Users/berinayzumrasariel/Desktop/DSA210 TERM PROJECT/focused_hours_and_days_{tag}.png'
+
+
+    output_path = f'/content/focused_hours_and_days_{tag}.png'
     plt.savefig(output_path)
     plt.show()
     print(f'Graph for {tag} saved to {output_path}')
