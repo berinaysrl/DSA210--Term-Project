@@ -8,7 +8,7 @@ data = pd.read_csv(file_path)
 data['Start Time'] = pd.to_datetime(data['Start Time'], errors='coerce')
 data['End Time'] = pd.to_datetime(data['End Time'], errors='coerce')
 
-excluded_tags = ['CDP', 'PROJ201']
+excluded_tags = ['CDP', 'PROJ201', 'studying italian', 'writing stories']
 data = data[~data['Tag'].isin(excluded_tags)]
 
 data['Duration (hours)'] = (data['End Time'] - data['Start Time']).dt.total_seconds() / 3600
