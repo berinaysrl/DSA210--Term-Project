@@ -31,14 +31,14 @@ As it is a commonly known issue, social media useage has an adverse effect on on
 
 ## Project Idea
 
-The goal of this project is to determine whether there is an **inverse relationship** between my Instagram activity and study focus time throughout this semester. Specifically:
-1. I will analyze my **Instagram likes activity** to measure how active I am on the platform each day. (The reason why I did not go with the activity time is because of the requested data did not contain such a collection of total hours spent on a daily basis.)
-2. I will use my **Forest app study sessions** to track the number of hours I spent studying on the same days.
-3. By comparing these two datasets day by day, I aim to test my hypothesis:  
-   - Higher Instagram usage corresponds to lower study time (and vice versa).  
-   - This may reveal patterns about how distractions like Instagram impact productivity.
+The goal of this project is to determine whether there is a relationship between my Instagram activity and study focus time throughout my last three academic semesters. Specifically:
 
-
+1. I analyzed my **Instagram likes activity** to measure how active I am on the platform each day. (The reason why I did not go with the activity time is because of the requested data did not contain such a collection of total hours spent on a daily basis.)
+2. I used my **Forest app study sessions** to track the number of hours I spent studying on the same days.
+   
+3. By comparing these two datasets day by day and hour by hour, I aimed to test my two null hypotheses:  
+   a. Hourly Correlation: There is no monotonic relationship between hourly study hours and Instagram usage, especially in last 3 semesters.
+   b. Daily Correlation: There is no monotonic relationship between daily study hours and Instagram usage, in last 3 semesters.
 
 
 ## Data Source
@@ -52,7 +52,7 @@ The goal of this project is to determine whether there is an **inverse relations
    
 
  2. **Social Media as Instagram**
-    Since Instagram (or TikTok) applies to majority of the society for distraction, I chose the one  that I use for this project. I have requested to export my Instagram Activity from the [app](https://apps.apple.com/us/app/instagram/id389801252).
+    Since Instagram (or TikTok) applies to majority of the society for distraction, I chose the one that I use for this project. I have requested to export my Instagram Activity from the [app](https://apps.apple.com/us/app/instagram/id389801252).
     From that package of data, I chose to go with "Liked Posts" dataset, which contains:
     - Timestamps of likes I've given to posts or reels.
     - The associated metadata for each like (like the URL of the content and its title.)
@@ -65,38 +65,39 @@ The goal of this project is to determine whether there is an **inverse relations
 
 ## Project Plan
 
-I will follow these steps to analyze the data. I will use Python for data analysis and visualization with Pandas, numpy, matplotlib, and seaborn to achieve these steps:  
+I followed these steps to analyze the data. I used Python (PyCharm) for data analysis and visualization with Pandas, numpy, matplotlib, seaborn, and many more to achieve these steps:  
 
 1. **Preprocessing**:
    - Parse and clean both datasets.
    - Standardize timestamps for comparison (convert to daily totals).
+   - Get rid of meaningless data and randomize them into useful data.
    - Extract key features:
      - Total likes per day (Instagram dataset).
      - Total study hours per day (Forest dataset).
+     - Total study attempts for each tag (course), etc.
 
 2. **Exploratory Data Analysis (EDA)**:
-   - Visualize daily Instagram activity and study time.
-   - Identify patterns and outliers.
+   - I visualized daily Instagram activity and study time, both separately, and together in order to identify any existing patterns. 
 
 3. **Correlation Analysis**:
-   - Calculate the correlation between Instagram usage and study focus time to test my hypothesis of an inverse relationship.
+   - I calculated the daily and hourly correlation between Instagram usage and study focus time to test my hypothesis of an inverse relationship.
 
-4. **Visualization**:
-     Create comparative charts:
-     - Line charts will show the trend of Instagram likes and study focus time over days
-     - Scatter plots to show any correlation between the two variables (if exists).
-
-
+4. **Hypothesis Testing**:
+     In this part, I conducted some hypothesis testing to find out if I have rejected my null hypotheses or failed to reject. 
+     - By calculating Spearman correlation values.
+     - P-values.
+     - Chi-Square values, etc.
+  
 
 
 ## Findings
 
-   This section will be completed after the proposal is approved and the analysis is conducted.
+   You may check out my [slideshow](https://drive.google.com/file/d/1cncEdrTo5SlBQsEB7A_PjHZbTbTxttrI/view?usp=sharing) for this section, I presented and explained it at there. 
+   For further details like the coding part and further insights like regression model and decision tree implementations, please check [my term project report](https://colab.research.google.com/drive/11QVhvej8JApum-wUytcw5WGwoQJU7uFy?usp=sharing) as well. My findings are well descripted and shown there. 
+   
 
 
- 
-## Limitations and Future Work
 
-   This section will be completed after the proposal is approved and the analysis is conducted. In the future, I may extend this analysis to other social media platforms like YouTube (my second mostly-used app for distraction) or explore strategies to reduce distractions.
+   
 
     
