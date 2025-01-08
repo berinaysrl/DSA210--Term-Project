@@ -3,9 +3,11 @@ In this term project, I will be exploring the relationship with my Instagram usa
 
 I am Berinay Zümra Sarıel, a DSA210 student who will conduct this term project about the relationship between her social media usage and study focus time. 
 
+You can check my slides [here](https://drive.google.com/file/d/1cncEdrTo5SlBQsEB7A_PjHZbTbTxttrI/view?usp=sharing) to have a general perspective about my project. 
+
 
 ## Table of Contents
-**[Motivation](#Motivatiom)**  
+**[Motivation](#Motivation)**  
 
 **[Project Idea](#Project-Idea)**
 
